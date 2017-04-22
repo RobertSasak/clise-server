@@ -80,7 +80,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         length = f.tell()
         f.seek(0)
         self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        self.send_header("Content-type", "application/json")
         self.send_header("Content-Length", str(length))
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
@@ -131,7 +131,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 cat = age_category.predict(test)
                 cat2 = [int(s) for s in cat[0].split() if s.isdigit()][0]
 
-                return (True, "{category:" + str(cat2) + "}")
+                return (True, "{\"category\":" + str(cat2) + "}")
             else:
                 out.write(preline)
                 preline = line
