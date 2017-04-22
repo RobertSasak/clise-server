@@ -1,1 +1,1 @@
-web: gunicorn clise.server --log-file -
+web: python clise/server.py
