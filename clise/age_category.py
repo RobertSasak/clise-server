@@ -7,7 +7,7 @@ from sklearn import decomposition
 from sklearn.utils.extmath import fast_dot
 
 # load classifier
-clf_filename = 'classifier.joblib.pkl'
+clf_filename = 'clise/classifier.joblib.pkl'
 clf = joblib.load(clf_filename)
 
 # predict function
