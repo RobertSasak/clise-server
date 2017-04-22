@@ -65,7 +65,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200, "ok")
         self.send_header('Access-Control-Allow-Credentials', 'true')
-        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Origin', 'http://localhost:8888')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header("Access-Control-Allow-Headers", "X-Requested-With, Content-type")
 
@@ -74,19 +74,9 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         r, info = self.deal_post_data()
         print r, info, "by: ", self.client_address
         f = StringIO()
-        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write("<html>\n<title>Upload Result Page</title>\n")
-        f.write("<body>\n<h2>Upload Result Page</h2>\n")
-        f.write("<hr>\n")
-        if r:
-            f.write("<strong>Success:</strong>")
-        else:
+        if not r:
             f.write("<strong>Failed:</strong>")
         f.write(info)
-        f.write("<br><a href=\"%s\">back</a>" % self.headers['referer'])
-        f.write("<hr><small>Powerd By: bones7456, check new version at ")
-        f.write("<a href=\"http://li2z.cn/?s=SimpleHTTPServerWithUpload\">")
-        f.write("here</a>.</small></body>\n</html>\n")
         length = f.tell()
         f.seek(0)
         self.send_response(200)
@@ -141,7 +131,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 cat = age_category.predict(test)
                 cat2 = [int(s) for s in cat[0].split() if s.isdigit()][0]
 
-                return (True, "Category " + str(cat2))
+                return (True, "{category:" + str(cat2) + "}")
             else:
                 out.write(preline)
                 preline = line
