@@ -62,6 +62,13 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if f:
             f.close()
 
+    def do_OPTIONS(self):
+        self.send_response(200, "ok")
+        self.send_header('Access-Control-Allow-Credentials', 'true')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header("Access-Control-Allow-Headers", "X-Requested-With, Content-type")
+
     def do_POST(self):
         """Serve a POST request."""
         r, info = self.deal_post_data()
@@ -85,6 +92,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.send_header("Content-Length", str(length))
+        self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         if f:
             self.copyfile(f, self.wfile)
@@ -299,11 +307,6 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         '.c': 'text/plain',
         '.h': 'text/plain',
         })
-
-    def end_headers (self):
-        self.send_header('Access-Control-Allow-Origin', '*')
-        SimpleHTTPRequestHandler.end_headers(self)
-
 
 def test(HandlerClass = SimpleHTTPRequestHandler,
          ServerClass = BaseHTTPServer.HTTPServer):
