@@ -1,1 +1,1 @@
-web: python clise/server.py
+web: python clise/server.py $PORT
