@@ -21,6 +21,12 @@ import cgi
 import shutil
 import mimetypes
 import re
+import glob
+import numpy as np
+import pandas as pd 
+from PIL import Image
+import age_category
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -79,6 +85,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.send_header("Content-Length", str(length))
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         if f:
             self.copyfile(f, self.wfile)
@@ -118,7 +125,16 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     preline = preline[0:-1]
                 out.write(preline)
                 out.close()
-                return (True, "File '%s' upload success!" % fn)
+
+                # read image again
+                im = Image.open(fn)
+                im = im.resize((80,80), Image.ANTIALIAS)
+                mat = np.asarray(im)
+                test = pd.DataFrame(mat.reshape(80*80*3))
+                cat = age_category.predict(test)
+                cat2 = [int(s) for s in cat[0].split() if s.isdigit()][0] 
+                
+                return (True, "Category " + str(cat2))
             else:
                 out.write(preline)
                 preline = line
@@ -177,7 +193,7 @@ class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         """
         try:
-            list = os.listdir(path)
+            list = glob.glob(path + "*.jpg")
         except os.error:
             self.send_error(404, "No permission to list directory")
             return None
